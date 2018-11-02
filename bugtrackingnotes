@@ -1,0 +1,77 @@
+BUG
+********************************************************************************************
+POST localhost:3000/v1/users 
+    with body {
+        "email": "blah@gmail.com",
+	    "password": "secure-password"
+    }
+    returns {
+        "success": false,
+        "error": "user already exists with that email"
+    }
+    DB shows no users created, trying other emails doesn't work
+
+Tracing
+    v1/users   runs 
+    user.controller.js > create 
+        await to(authService.createUser(body)); throws error
+            error from TE util.service 43 from Object.createUser auth.service 41
+    util.service.js > to runs 
+    authService.js > createUser(UserInfo) runs 
+        await to(User.create(userInfo)) 
+    util.service.js > to runs
+    User.create(userInfo)
+
+    from sequelize:
+    model.create builds model and calls save on it
+        returns promise
+
+Order of logs
+    run create user                 auth.service > createUser 22
+    error in to                     util service
+    error in create                 auth.service > createUser 38
+    error in to                     util.service
+    error in user controller create    user.controller > create
+
+
+Problem appears to be with:
+    await to(User.create(userInfo)); in auth.service 36
+
+Extra steps i can take
+    write a route for basic add user to sequelize without any checks
+
+
+Removing beforesave fixes issue 
+trying to fix before save bcrypt issue now
+
+
+******************************************************************************************
+From my response to someone with the same bcrypt install issue on github:
+That's actually an issue with Bcrypt itself.
+
+Bcrypt depends on node-gyp for native code which installs using prebuilt binaries. 
+If it doesn't find a pre-built binary for the version you are using (like it doesn't have one for your versions bcrypt@1.0.3 and node@10.12.0) 
+then it tries to build it from the source. This requires you to have Python 2, a C++ compiler, and a make system installed. 
+And it isn't finding it on your system so it is failing.
+
+You can either install those and have your computer build the binary you need or you can do a workaround like I did.
+
+Remove bcrypt and bcrypt-promise, and install bcrypt-nodejs. 
+Then replace the requires for bcrypt with require('bcrypt-nodejs').
+
+I couldn't get bcrypt-nodejs-as-promised to replace bcrypt-promise so I had to write my own function for the 
+hash promise in user.model.js:
+
+async function bcryptHash(bPass, bSalt) { 
+    return await new Promise((resolve, reject) => { 
+        bcrypt.hash(bPass, bSalt, null, function (err, hash) { 
+            if (err) reject(err) resolve(hash) 
+        }); 
+    }) 
+}
+
+And then in the call to the bcrypt_p.hash I just replace it with my own function :
+
+[err, hash] = await to(bcryptHash(user.password, salt));
+
+This got it running for me without installing the Python 2, a C++ compiler, and a make system.
