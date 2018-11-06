@@ -12,10 +12,13 @@ module.exports = (sequelize, DataTypes) => {
         email     : {type: DataTypes.STRING, allowNull: true, unique: true, validate: { isEmail: {msg: "Email Phone number invalid."} }},
         phone     : {type: DataTypes.STRING, allowNull: true, unique: true, validate: { len: {args: [7, 20], msg: "Phone number invalid, too short."}, isNumeric: { msg: "not a valid phone number."} }},
         password  : DataTypes.STRING,
-    });
+    }, {
+			timestamps:false
+		});
 
     Model.associate = function(models){
         this.Companies = this.belongsToMany(models.Company, {through: 'UserCompany'});
+        this.Collections = this.belongsToMany(models.Collection, {through: 'UserCollection'})
     };
     
     Model.beforeSave(async (user, options) => {
