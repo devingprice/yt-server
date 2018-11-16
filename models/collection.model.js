@@ -3,6 +3,8 @@ const {TE, to}              = require('../services/util.service');
 module.exports = (sequelize, DataTypes) => {
 	var Model = sequelize.define('Collection', {
 		name: DataTypes.STRING
+	}, {
+		timestamps:false
 	});
 
 	Model.associate = function(models){

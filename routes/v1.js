@@ -5,6 +5,7 @@ const UserController 	= require('../controllers/user.controller');
 const CompanyController = require('../controllers/company.controller');
 const HomeController 	= require('../controllers/home.controller');
 const CollectionController = require('../controllers/collection.controller');
+const ChannelController = require('../controllers/channel.controller');
 
 const custom 	        = require('./../middleware/custom');
 
@@ -33,6 +34,15 @@ router.put(     '/companies/:company_id', passport.authenticate('jwt', {session:
 router.delete(  '/companies/:company_id', passport.authenticate('jwt', {session:false}), custom.company, CompanyController.remove);  // D
 
 router.get('/dash', passport.authenticate('jwt', {session:false}),HomeController.Dashboard);
+
+router.post(    '/collection', passport.authenticate('jwt', {session:false}), CollectionController.create);
+router.get(     '/collections/:user_id', passport.authenticate('jwt', {session:false}), CollectionController.getAllForUser);                  // R
+router.get(     '/collection/:collection_id', passport.authenticate('jwt', {session:false}), custom.collection, CollectionController.get);     // R
+router.put(     '/collection/:collection_id', passport.authenticate('jwt', {session:false}), custom.collection, CollectionController.update);  // U
+router.delete(  '/collection/:collection_id', passport.authenticate('jwt', {session:false}), custom.collection, CollectionController.remove);  // D
+
+router.post(     '/channel/:collection_id', passport.authenticate('jwt', {session:false}), custom.collection, ChannelController.create);  // U
+router.delete(   '/channel/:channel_id', passport.authenticate('jwt', {session:false}), custom.channel, ChannelController.remove);  // D
 
 router.post(    '/collections',             passport.authenticate('jwt', {session:false}), CollectionController.create);
 

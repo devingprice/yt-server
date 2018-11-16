@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         email     : {type: DataTypes.STRING, allowNull: true, unique: true, validate: { isEmail: {msg: "Email Phone number invalid."} }},
         phone     : {type: DataTypes.STRING, allowNull: true, unique: true, validate: { len: {args: [7, 20], msg: "Phone number invalid, too short."}, isNumeric: { msg: "not a valid phone number."} }},
         password  : DataTypes.STRING,
-    });
+    }, {
+			timestamps:false
+		});
 
     Model.associate = function(models){
         this.Companies = this.belongsToMany(models.Company, {through: 'UserCompany'});
@@ -56,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
             user.password = hash;
         }
     });
-    /* */
+    
     Model.prototype.comparePassword = async function (pw) {
         let err, pass
         if(!this.password) TE('password not set');

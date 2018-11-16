@@ -2,7 +2,10 @@ const {TE, to}              = require('../services/util.service');
 
 module.exports = (sequelize, DataTypes) => {
 	var Model = sequelize.define('Channel', {
-		name: DataTypes.STRING
+		name : DataTypes.STRING,
+		ytId : DataTypes.STRING
+	}, {
+		timestamps:false
 	});
 
 	/* In sequelize docs:
