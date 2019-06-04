@@ -1,5 +1,6 @@
 const models = require('../models');
 const Collection = models.Collection;
+const Channel = models.Channel;
 const { to, ReE, ReS } = require('../services/util.service');
 
 const create = async function(req, res){
@@ -35,25 +36,37 @@ const getAllForUser = async function(req, res){
 	//let user = req.user;
 	let collections;//err,
 
-	[err, collections] = await to(enteredUser.getCollections({include: [ {association: Collection.Users} ] }));
+	[err, collections] = await to(
+		//enteredUser.getCollections({include: [ {association: Collection.Users} ] })
+        enteredUser.getCollections({
+			include: [{
+        		model: Channel,
+				as: 'Channels' //making channels lowercase stops this from working ???
+        	 }]
+        })
+	);
 
 	let collections_json =[];
 	for( let i in collections){
 		let collection = collections[i];
-		let users =  collection.Users;
 		let collection_info = collection.toWeb();
+        collections_json.push(collection_info);
+
+        /*let users =  collection.Users;
 		let users_info = [];
 		for (let j in users){
 			let user = users[j];
 			// let user_info = user.toJSON();
-			users_info.push({user:user.id});
+			//users_info.push({user:user.id});
 		}
-		collection_info.users = users_info;
-		collections_json.push(collection_info);
+		//collection_info.users = users_info;
+		*/
 	}
 
 	console.log('c t', collections_json);
-	return ReS(res, {collections:collections_json});
+	return ReS(res, {
+		collections:collections_json
+	});
 };
 module.exports.getAllForUser = getAllForUser;
 
