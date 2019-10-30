@@ -28,7 +28,7 @@ module.exports = {
     let sendData = { success: true };
 
     if (typeof data === 'object') {
-      sendData = Object.assign(data, send_data); //merge the objects
+      sendData = Object.assign(data, sendData); //merge the objects
     }
 
     if (typeof code !== 'undefined') {

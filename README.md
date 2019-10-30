@@ -1,7 +1,7 @@
 # YT-Server
 
 ## Description
-REST API to handle database for Youtube Frontpage.
+REST API to handle database for [Youtube Frontpage](https://github.com/devingprice/yt-frontpage).
 
 ##### Routing         : Express
 ##### ORM Database    : Sequelize
