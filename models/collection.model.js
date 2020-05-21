@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     this.Channels = this.hasMany(models.Channel);
   };
 
+  // eslint-disable-next-line no-unused-vars
   Model.prototype.toWeb = function(pw) {
     let json = this.toJSON();
     return json;

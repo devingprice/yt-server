@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     this.Collections = this.belongsTo(models.Collection);
   };
 
+  // eslint-disable-next-line no-unused-vars
   Model.prototype.toWeb = function(pw) {
     let json = this.toJSON();
     return json;
