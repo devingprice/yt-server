@@ -39,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
+  // eslint-disable-next-line no-unused-vars
   Model.beforeSave(async (user, options) => {
     let err;
 
@@ -117,6 +118,7 @@ module.exports = (sequelize, DataTypes) => {
     );
   };
 
+  // eslint-disable-next-line no-unused-vars
   Model.prototype.toWeb = function(pw) {
     let json = this.toJSON();
     return json;
