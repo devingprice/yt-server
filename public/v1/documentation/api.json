@@ -3,7 +3,7 @@
   "info": {
     "description": "This is documentatin for the Node API. For every request you must include in the header: \n Content-Type: application/json \n\n For protected routes by authorization we use JWT. Each of these have a lock by them. Must include a Bearer Token in the header \n Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ...",
     "version": "1.0.0",
-    "title": "Rest Node API mysql + JWT",
+    "title": "Yt-Server",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "email": "brian@orangetech.com"
@@ -25,8 +25,12 @@
       }
     },
     {
-      "name": "app",
+      "name": "collection",
       "description": "creation and app management"
+    },
+    {
+      "name": "channel",
+      "description": "channel creation and deletion"
     }
   ],
   "schemes": [
@@ -34,14 +38,13 @@
     "https"
   ],
   "paths": {
-    "/apps": {
+    "/collection": {
       "post": {
         "tags": [
-          "app"
+          "collection"
         ],
-        "summary": "Creates App",
-        "description": "Creates a record of an App in our database",
-        "operationId": "getInventory",
+        "summary": "Creates collection",
+        "description": "Creates a collection belonging to logged in user",
         "produces": [
           "application/json"
         ],
@@ -71,13 +74,101 @@
         ]
       }
     },
-    "/apps/{app_id}": {
+    "/collections": {
+      "post": {
+        "tags": [
+          "collection"
+        ],
+        "summary": "Duplicate create channel",
+        "description": "Duplicate that may be removed after checking tests",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ApiUnauthorizezdResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/collections/:user_id": {
       "get": {
         "tags": [
-          "app"
+          "collection"
         ],
-        "summary": "Return App",
-        "description": "Returns information about App",
+        "summary": "Return all user's collections",
+        "description": "Returns all collections belonging to user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "description": "name that need to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/CreateUser"
+            }
+          },
+          "400": {
+            "description": "Invalid Order"
+          },
+          "401": {
+            "description": "unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ApiUnauthorizezdResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/collection/:collection_id": {
+      "get": {
+        "tags": [
+          "collection"
+        ],
+        "summary": "Return collection object",
+        "description": "Returns collection with associated channels",
         "produces": [
           "application/json"
         ],
@@ -124,10 +215,10 @@
       },
       "put": {
         "tags": [
-          "app"
+          "collection"
         ],
-        "summary": "Update app",
-        "description": "Update App information",
+        "summary": "Update collection",
+        "description": "Updates collection. Collection must belong to logged in user.",
         "produces": [
           "application/json"
         ],
@@ -174,114 +265,10 @@
       },
       "delete": {
         "tags": [
-          "app"
+          "collection"
         ],
-        "summary": "Soft delete app",
-        "description": "soft delete app",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "app_id",
-            "in": "path",
-            "description": "name that need to be updated",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Updated user object",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CreateUser"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "#/definitions/CreateUser"
-            }
-          },
-          "400": {
-            "description": "Invalid Order"
-          },
-          "401": {
-            "description": "unauthorized",
-            "schema": {
-              "$ref": "#/definitions/ApiUnauthorizezdResponse"
-            }
-          }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
-      }
-    },
-    "/apps/{app_id}/hard": {
-      "delete": {
-        "tags": [
-          "app"
-        ],
-        "summary": "Hard delete app",
-        "description": "All app information will be removed from database",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "app_id",
-            "in": "path",
-            "description": "name that need to be updated",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Updated user object",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CreateUser"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "#/definitions/CreateUser"
-            }
-          },
-          "400": {
-            "description": "Invalid Order"
-          },
-          "401": {
-            "description": "unauthorized",
-            "schema": {
-              "$ref": "#/definitions/ApiUnauthorizezdResponse"
-            }
-          }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
-      }
-    },
-    "/apps/{app_id}/restore": {
-      "put": {
-        "tags": [
-          "app"
-        ],
-        "summary": "Restores soft deleted app",
-        "description": "All app information will be removed from database",
+        "summary": "Delete collection",
+        "description": "Delete collection and all associated channels",
         "produces": [
           "application/json"
         ],
@@ -437,76 +424,8 @@
         "tags": [
           "user"
         ],
-        "summary": "Soft delete user",
+        "summary": "Delete user",
         "description": "This can only be done by the logged in user.",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "204": {
-            "description": "success",
-            "schema": {
-              "$ref": "#/definitions/ApiSuccessResponse"
-            }
-          },
-          "401": {
-            "description": "unauthorized",
-            "schema": {
-              "$ref": "#/definitions/ApiUnauthorizezdResponse"
-            }
-          },
-          "default": {
-            "description": "successful operation"
-          }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
-      }
-    },
-    "/users/hard": {
-      "delete": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Hard delete user",
-        "description": "Remove user from database",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "204": {
-            "description": "success",
-            "schema": {
-              "$ref": "#/definitions/ApiSuccessResponse"
-            }
-          },
-          "401": {
-            "description": "unauthorized",
-            "schema": {
-              "$ref": "#/definitions/ApiUnauthorizezdResponse"
-            }
-          },
-          "default": {
-            "description": "successful operation"
-          }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
-      }
-    },
-    "/users/restore": {
-      "put": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Restore soft deleted user",
-        "description": "",
         "produces": [
           "application/json"
         ],
@@ -574,6 +493,77 @@
           }
         }
       }
+    },
+    "/channel/:collection_id": {
+      "post": {
+        "tags": [
+          "channel"
+        ],
+        "summary": "Create channel",
+        "description": "Creates a channel belonging to a collection. Collection must belong to logged in user.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Creates user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/CreateUserResponse"
+            }
+          },
+          "422": {
+            "description": "Invalid operation",
+            "schema": {
+              "$ref": "#/definitions/ApiErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/channel/:channel_id": {
+      "delete": {
+        "tags": [
+          "channel"
+        ],
+        "summary": "Delete channel",
+        "description": "Delete a channel. This can only be done by the logged in user who owns the channel's collection.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "success",
+            "schema": {
+              "$ref": "#/definitions/ApiSuccessResponse"
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ApiUnauthorizezdResponse"
+            }
+          },
+          "default": {
+            "description": "successful operation"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
     }
   },
   "securityDefinitions": {
@@ -589,6 +579,54 @@
     }
   },
   "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "first": {
+          "type": "string"
+        },
+        "last": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "example": "unique email address"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Collection": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Channel": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "ytId": {
+          "type": "string"
+        }
+      }
+    },
+    "UserCollection": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "integer"
+        }
+      }
+    },
     "CreateUser": {
       "type": "object",
       "properties": {
