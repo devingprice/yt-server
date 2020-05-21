@@ -1,8 +1,9 @@
+/* eslint-disable prettier/prettier */
 const express = require('express');
 const router = express.Router();
 
 const UserController = require('../controllers/user.controller');
-const HomeController = require('../controllers/home.controller');
+//const HomeController = require('../controllers/home.controller');
 const CollectionController = require('../controllers/collection.controller');
 const ChannelController = require('../controllers/channel.controller');
 
@@ -31,11 +32,13 @@ router.put('/users', JWTAuth, UserController.update); // U
 router.delete('/users', JWTAuth, UserController.remove); // D
 router.post('/users/login', UserController.login);
 
+/*
 router.get(
   '/dash',
   passport.authenticate('jwt', { session: false }),
   HomeController.Dashboard
 );
+*/
 
 router.post('/collection', JWTAuth, CollectionController.create);
 router.get('/collections/:user_id', JWTAuth, CollectionController.getAllForUser); // R
