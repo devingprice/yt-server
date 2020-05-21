@@ -1,6 +1,6 @@
 //const { User }          = require('../models');
-const models = require('../models');
-const User = models.User;
+// const models = require('../models');
+// const User = models.User;
 const authService = require('../services/auth.service');
 const { to, ReE, ReS } = require('../services/util.service');
 
