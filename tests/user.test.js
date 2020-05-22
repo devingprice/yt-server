@@ -111,4 +111,49 @@ describe('Testing Users', () => {
         });
     });
   });
+
+  describe('GET /users', () => {
+    it('it should reject an unauthorized request', done => {
+      let seedUser = {
+        email: 'dumbyTest@email.com',
+        password: 'incorrect'
+      };
+      chai
+        .request(server)
+        .get('/users')
+        .end((err, res) => {
+          res.should.have.status(401);
+          done();
+        });
+    });
+
+    it('it should return user for authorized request', done => {
+      let seedUser = {
+        email: 'dumbyTest@email.com',
+        password: 's3cureP@ss'
+      };
+      chai
+        .request(server)
+        .post('/users/login')
+        .send(seedUser)
+        .end((err, res) => {
+          let token = res.body.token;
+
+          chai
+            .request(server)
+            .get('/users')
+            .set('Authorization', token)
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('object');
+              res.body.success.should.equal(true);
+              res.body.should.have.property('user');
+              res.body.user.should.have.property('id');
+              res.body.user.should.have.property('email');
+              res.body.user.email.should.have.equal(seedUser.email);
+              done();
+            });
+        });
+    });
+  });
 });
