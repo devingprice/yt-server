@@ -33,9 +33,7 @@ describe('Testing Users', () => {
           done();
         });
     });
-  });
 
-  describe('POST /users', () => {
     it('it should POST a user with correct details', done => {
       let userDetails = {
         email: 'test@gmail.com',
@@ -52,6 +50,63 @@ describe('Testing Users', () => {
           res.body.user.should.have.property('id');
           res.body.should.have.property('token');
           res.body.success.should.equal(true);
+          done();
+        });
+    });
+  });
+
+  describe('POST /users/login', () => {
+    it('it should reject an incorrect username', done => {
+      let userDetails = {
+        email: 'randomIncorrect@email.com',
+        password: 'randomPass'
+      };
+      chai
+        .request(server)
+        .post('/users/login')
+        .send(userDetails)
+        .end((err, res) => {
+          res.should.have.status(422);
+          res.body.success.should.equal(false);
+          res.body.error.should.equal('Not registered');
+          done();
+        });
+    });
+
+    it('it should reject an incorrect password', done => {
+      let seedUser = {
+        email: 'dumbyTest@email.com',
+        password: 'incorrect'
+      };
+      chai
+        .request(server)
+        .post('/users/login')
+        .send(seedUser)
+        .end((err, res) => {
+          res.should.have.status(422);
+          res.body.success.should.equal(false);
+          done();
+        });
+    });
+
+    it('it should return a token for a correct username/password', done => {
+      let seedUser = {
+        email: 'dumbyTest@email.com',
+        password: 's3cureP@ss'
+      };
+      chai
+        .request(server)
+        .post('/users/login')
+        .send(seedUser)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.success.should.equal(true);
+          res.body.should.be.a('object');
+          res.body.should.have.property('token');
+          res.body.should.have.property('user');
+          res.body.user.should.have.property('id');
+          res.body.user.should.have.property('email');
+          res.body.user.email.should.have.equal(seedUser.email);
           done();
         });
     });
