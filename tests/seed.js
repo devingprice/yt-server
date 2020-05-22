@@ -27,5 +27,11 @@ module.exports = function seed(models) {
     }
   )
     .then(() => models.UserCollection.create({ CollectionId: 1, UserId: 1 })) // may remove if db issue figured out
+    .then(() =>
+      models.User.create({
+        email: 'dumber@email.com',
+        password: 'sup3r$ecret'
+      })
+    )
     .catch(e => console.log(e));
 };
