@@ -113,7 +113,7 @@ describe('Testing Users', () => {
   });
 
   describe('GET /users', () => {
-    it('it should reject an unauthorized request', done => {
+    it('it should reject an unauthenticated request', done => {
       let seedUser = {
         email: 'dumbyTest@email.com',
         password: 'incorrect'
@@ -127,7 +127,7 @@ describe('Testing Users', () => {
         });
     });
 
-    it('it should return user for authorized request', done => {
+    it('it should return user for authenticated request', done => {
       let seedUser = {
         email: 'dumbyTest@email.com',
         password: 's3cureP@ss'
@@ -154,6 +154,50 @@ describe('Testing Users', () => {
               done();
             });
         });
+    });
+  });
+
+  describe('PUT /users', () => {
+    it('it should reject an unauthenticated request', done => {
+      should.fail('WIP');
+      done();
+    });
+
+    it('it should reject an unauthorized request', done => {
+      should.fail('WIP');
+      done();
+    });
+
+    it('it should reject authorized request with faulty parameters', done => {
+      should.fail('WIP');
+      done();
+    });
+
+    it('it should return success for authorized request', done => {
+      should.fail('WIP');
+      done();
+    });
+  });
+
+  describe('DELETE /users', () => {
+    it('it should reject an unauthenticated request', done => {
+      should.fail('WIP');
+      done();
+    });
+
+    it('it should reject an unauthorized request', done => {
+      should.fail('WIP');
+      done();
+    });
+
+    it('it should reject authorized request with faulty parameters', done => {
+      should.fail('WIP');
+      done();
+    });
+
+    it('it should return success for authorized request and user/collections/channels should be out of database', done => {
+      should.fail('WIP');
+      done();
     });
   });
 });
