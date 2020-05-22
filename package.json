@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "lint": "eslint --quiet .",
     "fix": "eslint --fix .",
-    "test": "mocha tests/*.test.js NODE_ENV=test --timeout 10000"
+    "test": "SET NODE_ENV=test & mocha tests/*.test.js --timeout 10000"
   },
   "dependencies": {
     "await-to-js": "^2.0.1",
