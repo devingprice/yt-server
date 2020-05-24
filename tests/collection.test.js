@@ -114,6 +114,42 @@ describe('Collections', () => {
     // it should not return a collection if collection is private and user is not owner
   });
 
+  describe('POST /collection/', () => {
+    const newCollection = {
+      name: 'new Collection Name'
+    };
+
+    it('it should reject an unauthenticated request', done => {
+      chai
+        .request(server)
+        .post('/collection')
+        .send(newCollection)
+        .end((err, res) => {
+          res.should.have.status(401);
+          done();
+        });
+    });
+
+    it('it should create collection successfully', done => {
+      chai
+        .request(server)
+        .post('/collection')
+        .set('Authorization', token)
+        .send(newCollection)
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.body.should.be.a('object');
+          res.body.should.have.property('success');
+          res.body.success.should.equal(true);
+          res.body.should.have.property('collection');
+          res.body.collection.should.be.a('object');
+          res.body.collection.should.have.property('id');
+          res.body.collection.should.have.property('name');
+          done();
+        });
+    });
+  });
+
   describe('PUT /collection/:collection_id', () => {
     const newName = 'Renamed Collection';
 
