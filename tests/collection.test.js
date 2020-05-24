@@ -110,19 +110,67 @@ describe('Collections', () => {
         });
     });
 
-    it('it should return user', async () => {
-      const res = await chai
-        .request(server)
-        .get('/users')
-        .set('Authorization', token);
-
-      res.should.have.status(200);
-      res.body.should.be.a('object');
-      res.body.success.should.equal(true);
-      res.body.should.have.property('user');
-    });
-
     // In future upgrades
     // it should not return a collection if collection is private and user is not owner
+  });
+
+  describe('PUT /collection/:collection_id', () => {
+    const newName = 'Renamed Collection';
+
+    it('it should 404 a request without a collection id', done => {
+      chai
+        .request(server)
+        .put('/collection/')
+        .set('Authorization', token)
+        .send({ name: newName })
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.equal('Not Found');
+          res.body.should.have.property('error');
+          res.body.error.should.have.property('status');
+          res.body.error.status.should.equal(404);
+          done();
+        });
+    });
+
+    it('it should reject a request for a non existant collection', done => {
+      chai
+        .request(server)
+        .put('/collection/999')
+        .set('Authorization', token)
+        .send({ name: newName })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.success.should.equal(false);
+          res.body.should.have.property('error');
+          res.body.error.should.equal('collection not found with id: 999');
+          done();
+        });
+    });
+
+    it('it should rename collection successfully', done => {
+      chai
+        .request(server)
+        .put('/collection/1')
+        .set('Authorization', token)
+        .send({ name: newName })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('success');
+          res.body.success.should.equal(true);
+          res.body.should.have.property('collection');
+          res.body.collection.should.be.a('object');
+          res.body.collection.should.have.property('id');
+          res.body.collection.should.have.property('name');
+          res.body.collection.should.have.property('ownerId');
+          res.body.collection.id.should.equal(1);
+          res.body.collection.name.should.equal(newName);
+          done();
+        });
+    });
   });
 });
