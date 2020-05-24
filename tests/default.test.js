@@ -8,7 +8,7 @@ let server = require('../app.js');
 let should = chai.should();
 
 chai.use(chaiHttp);
-describe('Sanity check', () => {
+describe('Sanity', () => {
   describe('GET /', () => {
     it('it should return a success response', done => {
       chai

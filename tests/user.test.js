@@ -1,17 +1,12 @@
-process.env.NODE_ENV = 'test';
-process.env.APP = 'test';
-
 const models = require('../models');
 const seed = require('./seed');
 
-//Require the dev-dependencies
 let chai = require('chai');
 let chaiHttp = require('chai-http');
+chai.use(chaiHttp);
 let server = require('../app.js');
-// eslint-disable-next-line no-unused-vars
 let should = chai.should();
 
-chai.use(chaiHttp);
 describe('Users', () => {
   const seedUser = {
     email: 'dumbyTest@email.com',
@@ -336,20 +331,41 @@ describe('Users', () => {
     });
   });
 
-  // describe('DELETE /users', () => {
-  //   it('it should reject an unauthenticated request', done => {
-  //     should.fail('WIP');
-  //     done();
-  //   });
+  describe('DELETE /users', () => {
+    it('it should reject an unauthenticated request', done => {
+      chai
+        .request(server)
+        .delete('/users')
+        .end((err, res) => {
+          res.should.have.status(401);
+          done();
+        });
+    });
 
-  //   it('it should return success for authorized request', done => {
-  //     should.fail('WIP');
-  //     done();
-  //   });
+    it('it should return success for authorized request', async () => {
+      const loginRes = await chai
+        .request(server)
+        .post('/users/login')
+        .send(seedUser);
 
-  //   it('it should remove user/collections/channels from database on success', done => {
-  //     should.fail('WIP');
-  //     done();
-  //   });
-  // });
+      loginRes.should.have.status(200);
+      loginRes.body.should.be.a('object');
+      loginRes.body.should.have.property('token');
+
+      const token = loginRes.body.token;
+
+      const res = await chai
+        .request(server)
+        .delete('/users')
+        .set('Authorization', token);
+
+      res.should.have.status(204);
+    });
+
+    // currently removes the ownerId from collection table
+    it('it should remove user/collections/channels from database on success', done => {
+      should.fail('WIP');
+      done();
+    });
+  });
 });
