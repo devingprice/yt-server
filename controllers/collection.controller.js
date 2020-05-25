@@ -24,7 +24,7 @@ const create = async function(req, res) {
   let collectionJson = collection.toWeb();
   collectionJson.users = [{ user: user.id }];
 
-  return ReS(res, { company: collectionJson }, 201);
+  return ReS(res, { collection: collectionJson }, 201);
 };
 module.exports.create = create;
 
@@ -88,7 +88,7 @@ const get = function(req, res) {
 
   let collectionJson = collection.toWeb();
   collectionJson.channels = req.channels;
-  return ReS(res, { company: collectionJson });
+  return ReS(res, { collection: collectionJson });
 };
 module.exports.get = get;
 
@@ -102,7 +102,7 @@ const update = async function(req, res) {
   if (err) {
     return ReE(res, err);
   }
-  return ReS(res, { company: collection.toWeb() });
+  return ReS(res, { collection: collection.toWeb() });
 };
 module.exports.update = update;
 
@@ -122,7 +122,7 @@ const updateChannels = async function(req, res){
 	if(err){
 		return ReE(res, err);
 	}
-	return ReS(res, {company:collection.toWeb()});
+	return ReS(res, {collection:collection.toWeb()});
 	/////////////////////////////////////////////////////////
 	let err, collection;
 	let user = req.user;
@@ -140,7 +140,7 @@ const updateChannels = async function(req, res){
 	let collectionJson = collection.toWeb();
 	collectionJson.users = [{user:user.id}];
 
-	return ReS(res, {company:collectionJson}, 201);
+	return ReS(res, {collection:collectionJson}, 201);
 };
 module.exports.updateChannels = updateChannels;
 */

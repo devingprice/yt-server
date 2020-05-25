@@ -43,7 +43,6 @@ module.exports = (sequelize, DataTypes) => {
   Model.beforeSave(async (user, options) => {
     let err;
 
-    console.log('before save ran');
     if (user.changed('password')) {
       let salt, hash;
 
