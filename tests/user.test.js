@@ -363,9 +363,6 @@ describe('Users', () => {
     });
 
     // currently removes the ownerId from collection table
-    it('it should remove user/collections/channels from database on success', done => {
-      should.fail('WIP');
-      done();
-    });
+    it('it should remove user/collections/channels from database on success');
   });
 });

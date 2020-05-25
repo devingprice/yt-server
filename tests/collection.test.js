@@ -68,26 +68,27 @@ describe('Collections', () => {
         });
     });
 
-    it('it should not reject an unauthenticated request', done => {
-      chai
-        .request(server)
-        .get('/collection/1')
-        .end((err, res) => {
-          should.fail('WIP');
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('success');
-          res.body.success.should.equal(true);
-          res.body.should.have.property('collection');
-          res.body.collection.should.be.a('object');
-          res.body.collection.have.property('id');
-          res.body.collection.have.property('name');
-          res.body.collection.have.property('ownerId');
-          res.body.collection.have.property('channels');
-          res.body.collection.id.should.equal(1);
-          done();
-        });
-    });
+    it('it should not reject an unauthenticated request');
+    // it('it should not reject an unauthenticated request', done => {
+    //   chai
+    //     .request(server)
+    //     .get('/collection/1')
+    //     .end((err, res) => {
+    //       should.fail('WIP');
+    //       res.should.have.status(200);
+    //       res.body.should.be.a('object');
+    //       res.body.should.have.property('success');
+    //       res.body.success.should.equal(true);
+    //       res.body.should.have.property('collection');
+    //       res.body.collection.should.be.a('object');
+    //       res.body.collection.have.property('id');
+    //       res.body.collection.have.property('name');
+    //       res.body.collection.have.property('ownerId');
+    //       res.body.collection.have.property('channels');
+    //       res.body.collection.id.should.equal(1);
+    //       done();
+    //     });
+    // });
 
     it('it should return a collection object', done => {
       chai
