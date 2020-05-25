@@ -12,7 +12,6 @@
     "await-to-js": "^2.1.1",
     "bcrypt-nodejs": "0.0.3",
     "bcrypt-nodejs-as-promised": "^1.0.4",
-    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
