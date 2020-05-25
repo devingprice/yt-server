@@ -26,12 +26,10 @@ const create = async function(req, res) {
 
   return ReS(res, { channel: channelJson }, 201);
 };
-module.exports.create = create;
 
 const remove = async function(req, res) {
   let channel, err;
   channel = req.channel;
-
   [err, channel] = await to(channel.destroy());
   if (err) {
     return ReE(res, 'error occured trying to delete the channel');
@@ -39,4 +37,5 @@ const remove = async function(req, res) {
 
   return ReS(res, { message: 'Deleted channel' }, 204);
 };
-module.exports.remove = remove;
+
+module.exports = { create, remove };
