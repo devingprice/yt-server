@@ -5,7 +5,6 @@ let chai = require('chai');
 let chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 let server = require('../app.js');
-let should = chai.should();
 
 describe('Users', () => {
   const seedUser = {

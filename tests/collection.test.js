@@ -8,7 +8,6 @@ let chai = require('chai');
 let chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 let server = require('../app.js');
-let should = chai.should();
 
 describe('Collections', () => {
   const seedUser = {
@@ -209,5 +208,12 @@ describe('Collections', () => {
           done();
         });
     });
+  });
+
+  describe('DELETE /collection/:collection_id', () => {
+    it('it should reject unauthenticated request');
+    it('it should reject unauthorized request');
+    it('it should remove collection from database');
+    it('it should remove channels connected to collection from database');
   });
 });
