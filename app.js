@@ -9,7 +9,9 @@ const app = express();
 
 const CONFIG = require('./config/config');
 
-app.use(logger('dev'));
+if (CONFIG.environment === 'dev') {
+  app.use(logger('dev'));
+}
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -29,9 +31,13 @@ models.sequelize
   .catch(err => {
     console.error('Unable to connect to SQL database:', CONFIG.db_name, err);
   });
-if (CONFIG.app === 'dev') {
+
+if (CONFIG.app === 'test') {
+  //Currently emptying on every test that needs it instead of here
+  //models.sequelize.sync({ force: true }); //deletes all tables then recreates them
+} else {
+  //production and development
   models.sequelize.sync(); //creates table if they do not already exist
-  //models.sequelize.sync({ force: true });//deletes all tables then recreates them useful for testing and development purposes
 }
 
 // CORS
