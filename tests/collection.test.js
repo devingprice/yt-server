@@ -216,4 +216,12 @@ describe('Collections', () => {
     it('it should remove collection from database');
     it('it should remove channels connected to collection from database');
   });
+
+  describe('GET /collections/:user_id', () => {
+    it('it should 404 a request without a user id');
+    it('it should reject a request for a non existant user');
+    it('it should reject unauthenticated request');
+    it('it should reject unauthorized request');
+    it('it should get all collections & channels associated with user');
+  });
 });
