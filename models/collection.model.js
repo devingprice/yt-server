@@ -3,6 +3,12 @@ module.exports = (sequelize, DataTypes) => {
         'Collection',
         {
             name: DataTypes.STRING,
+            uniqueid: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true,
+            },
+            type: DataTypes.INTEGER,
         },
         {
             timestamps: false,

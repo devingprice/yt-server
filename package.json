@@ -9,6 +9,7 @@
     "test": "SET NODE_ENV=test & mocha tests/*.test.js --timeout 10000"
   },
   "dependencies": {
+    "adjective-adjective-animal": "^1.3.3",
     "await-to-js": "^2.1.1",
     "bcrypt-nodejs": "0.0.3",
     "bcrypt-nodejs-as-promised": "^1.0.4",

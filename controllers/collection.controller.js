@@ -2,26 +2,45 @@ const models = require('../models');
 const Collection = models.Collection;
 const Channel = models.Channel;
 const { to, ReE, ReS } = require('../services/util.service');
+const aaa = require('adjective-adjective-animal');
 
 const create = async function (req, res) {
     let err, collection;
     let user = req.user;
     let collectionInfo = req.body;
 
+    let attempts = 0;
+    const maxTries = 3;
+    let uniqueId = null;
+    while (true) {
+        try {
+            uniqueId = await aaa({ adjectives: 2, format: 'camel' });
+            const exists = models.sequelize.query(
+                `SELECT collections.uniqueid FROM collections WHERE collections.uniqueid = '${uniqueId}' LIMIT 1`,
+                { type: models.Sequelize.QueryTypes.SELECT }
+            );
+            if (exists) {
+                break;
+            }
+            attempts++;
+        } catch (e) {
+            if (attempts === maxTries - 1) {
+                return ReE(res, 'Uniqueid could not be generated', 500);
+            }
+        }
+    }
+
+    collectionInfo.uniqueid = uniqueId;
+
     [err, collection] = await to(Collection.create(collectionInfo));
     if (err) {
         return ReE(res, err, 422);
     }
 
-    collection.addUser(user, { through: { status: 'started' } });
-
-    [err, collection] = await to(collection.save());
-    if (err) {
-        return ReE(res, err, 422);
-    }
+    collection.addUser(user); //add to UserCollection
+    collection.setOwner(user);
 
     let collectionJson = collection.toWeb();
-    collectionJson.users = [{ user: user.id }];
 
     return ReS(res, { collection: collectionJson }, 201);
 };
