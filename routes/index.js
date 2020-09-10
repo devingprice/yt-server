@@ -5,6 +5,7 @@ const router = express.Router();
 const UserController = require('../controllers/user.controller');
 const CollectionController = require('../controllers/collection.controller');
 const ChannelController = require('../controllers/channel.controller');
+const FollowController = require('../controllers/follow.controller');
 
 const custom = require('./../middleware/custom');
 const passport = require('passport');
@@ -39,6 +40,8 @@ router.post('/channel/:collection_id', JWTAuth, custom.collection, ChannelContro
 router.delete('/channel/:channel_id', JWTAuth, custom.channel, ChannelController.remove);
 
 router.put('/order/:user_id', JWTAuth, CollectionController.order);
+router.post('/follow/:parentId/:childId', JWTAuth, FollowController.create);
+router.delete('/follow/:parentId/:childId', JWTAuth, FollowController.remove);
 
 router.post('/collections', JWTAuth, CollectionController.create);
 
