@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const Company = require('./../models').Company;
+//const Company = require('./../models').Company;
 const Collection = require('./../models').Collection;
 const Channel = require('./../models').Channel;
 const { to, ReE, ReS } = require('../services/util.service');
@@ -7,6 +7,7 @@ const { to, ReE, ReS } = require('../services/util.service');
 /*
 	Take company_id from url, find in db, check if user can access, return obj if it can
  */
+/*
 let company = async function (req, res, next) {
     let company_id, err, company;
     company_id = req.params.company_id;
@@ -35,14 +36,16 @@ let company = async function (req, res, next) {
     req.company = company;
     next();
 };
-module.exports.company = company;
+module.exports.company = company; 
+*/
 
 let collection = async function (req, res, next) {
     let collection_id, err, collection;
     collection_id = req.params.collection_id;
 
     [err, collection] = await to(
-        Collection.findOne({ where: { id: collection_id } })
+        // Collection.findOne({ where: { id: collection_id } })
+        Collection.findOne({ where: { uniqueid: collection_id } })
     );
     if (err) {
         return ReE(res, 'err finding collection');
@@ -51,6 +54,8 @@ let collection = async function (req, res, next) {
     if (!collection) {
         return ReE(res, 'collection not found with id: ' + collection_id);
     }
+
+    // todo may remove this, not sure if it will stop public viewing
     let user, users_array, users;
     user = req.user;
     [err, users] = await to(collection.getUsers());
@@ -66,23 +71,6 @@ let collection = async function (req, res, next) {
         );
     }
 
-    //TODO: move this out of this function, shouldnt be doing multiple things
-    //make it an internal function at top of collection controller
-    let channels_array;
-    [err, channels_array] = await to(collection.getChannels());
-    if (err) {
-        return ReE(res, 'err finding channels');
-    }
-    if (!channels_array) {
-        return ReE(
-            res,
-            'channels not found in collection id: ' + collection_id
-        );
-    }
-
-    req.channels = channels_array;
-    //collection.channels = channels_array;
-    //console.log(collection.channels);
     req.collection = collection;
     next();
 };

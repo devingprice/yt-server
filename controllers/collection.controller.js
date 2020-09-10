@@ -86,11 +86,24 @@ const getAllForUser = async function (req, res) {
 };
 
 //TODO: add this Add_channels_to_output on other functions
-const get = function (req, res) {
+const get = async function (req, res) {
     let collection = req.collection;
 
+    let channelsArray;
+    [err, channelsArray] = await to(collection.getChannels());
+    if (err) {
+        return ReE(res, 'err finding channels');
+    }
+
+    let nested;
+    [err, nested] = await to(collection.getChild());
+    if (err) {
+        return ReE(res, 'err finding nested collections');
+    }
+
     let collectionJson = collection.toWeb();
-    collectionJson.channels = req.channels;
+    collectionJson.channels = channelsArray;
+    collectionJson.nested = nested;
     return ReS(res, { collection: collectionJson });
 };
 
