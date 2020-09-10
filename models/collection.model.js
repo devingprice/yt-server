@@ -21,6 +21,18 @@ module.exports = (sequelize, DataTypes) => {
             through: 'UserCollection',
         });
         this.Channels = this.hasMany(models.Channel);
+
+        this.belongsToMany(models.Collection, {
+            through: 'NestedCollection',
+            as: 'parent',
+            foreignKey: 'parent_id',
+        });
+        // https://sequelize.org/v3/docs/associations/ may not need extra row for self-association
+        this.belongsToMany(models.Collection, {
+            through: 'NestedCollection',
+            as: 'child',
+            foreignKey: 'child_id',
+        });
     };
 
     // eslint-disable-next-line no-unused-vars

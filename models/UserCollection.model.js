@@ -7,7 +7,9 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: null,
             },
         },
-        {}
+        {
+            timestamps: false,
+        }
     );
 
     return Model;
