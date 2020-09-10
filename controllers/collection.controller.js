@@ -132,4 +132,108 @@ const remove = async function (req, res) {
     return ReS(res, { message: 'Deleted collection' }, 204);
 };
 
-module.exports = { create, getAllForUser, get, update, remove };
+const order = async function (req, res) {
+    let enteredUserId, err, enteredUser;
+    enteredUserId = req.params.user_id;
+
+    [err, enteredUser] = await to(
+        models.User.findOne({ where: { id: enteredUserId } })
+    );
+    if (err) {
+        return ReE(res, 'err finding user');
+    }
+    if (!enteredUser) {
+        return ReE(res, 'user not found with id: ' + enteredUserId);
+    }
+
+    let userCollections;
+    [err, userCollections] = await to(
+        models.sequelize.query(
+            `SELECT usercollections.CollectionId, usercollections.UserId, usercollections.\`order\`, collections.uniqueid
+            FROM usercollections 
+            LEFT JOIN collections ON collections.id = usercollections.CollectionId
+            WHERE usercollections.UserId = ${enteredUser.id}`,
+            { type: models.Sequelize.QueryTypes.SELECT }
+        )
+    );
+    //#region optimized query
+    /* 
+    this is a more optimized query but just like sequelize isn't taking "FROM usercollections ABRVIATION" 
+    it also isn't taking temp tables
+        `
+        DROP TABLE IF EXISTS tempColl;
+
+        CREATE TEMPORARY TABLE tempColl SELECT * FROM usercollections LIMIT 0;
+
+        INSERT INTO tempColl (\`order\`, CollectionId, UserId)
+        SELECT \`order\`, CollectionId, UserId 
+        FROM usercollections 
+        WHERE usercollections.UserId = '${enteredUserId}'; 
+
+        SELECT tempColl.\`order\`, tempColl.CollectionId, tempColl.UserId, collections.uniqueId
+        FROM tempColl
+        LEFT JOIN collections ON collections.id = tempColl.CollectionId;
+
+        DROP TEMPORARY TABLE tempColl;
+        `
+    */
+   //#endregion
+
+    const existingIds = userCollections.map((e) => e.CollectionId);
+
+    // TODO, for now I'm just going to overwrite the order and assume every request includes every non null value
+    let submittedOrder = req.body.order;
+
+    // filter out submitted for what is in db only
+    let buildQuery = submittedOrder
+        .filter((item) => existingIds.includes(parseInt(item.collectionId)))
+        .map((item) => {
+            return `(${
+                item.order + ',' + item.collectionId + ',' + enteredUser.id
+            })`;
+        })
+        .join(',');
+
+    let replaceResponse;
+    [err, replaceResponse] = await to(
+        models.sequelize.query(
+            `REPLACE INTO usercollections VALUES ${buildQuery}`
+        )
+    );
+    if (err) {
+        console.log(err);
+    }
+
+    console.log('affectedRows:' + replaceResponse[0].affectedRows);
+
+    let collOrder;
+    [err, collOrder] = await to(
+        models.sequelize.query(
+            `SELECT usercollections.CollectionId, usercollections.UserId, usercollections.\`order\`, collections.uniqueid
+            FROM usercollections 
+            LEFT JOIN collections ON collections.id = usercollections.CollectionId
+            WHERE usercollections.UserId = ${enteredUser.id}`,
+            { type: models.Sequelize.QueryTypes.SELECT }
+        )
+    );
+
+    /* TODO
+    here i need to get the order
+    https://stackoverflow.com/questions/48957191/how-do-i-orm-additional-columns-on-a-join-table-in-sequelize
+    then compare it to the order I sent up as a [{collectionid, order}] set
+    
+    I'm going to assume the frontend sends all that have an order given, any not sent are unlisted/unordered
+    so I set all the current orders with values to null
+        add the orders given to db order
+    then select all again and return for confirmation
+
+    *****Will need to check against follows order, and update those as well*******
+        may be worth moving to a helper function file since it is touching both controllers
+    */
+
+    return ReS(res, {
+        order: collOrder,
+    });
+};
+
+module.exports = { create, getAllForUser, get, update, remove, order };

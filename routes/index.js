@@ -38,6 +38,8 @@ router.delete('/collection/:collection_id', JWTAuth, custom.collection, Collecti
 router.post('/channel/:collection_id', JWTAuth, custom.collection, ChannelController.create);
 router.delete('/channel/:channel_id', JWTAuth, custom.channel, ChannelController.remove);
 
+router.put('/order/:user_id', JWTAuth, CollectionController.order);
+
 router.post('/collections', JWTAuth, CollectionController.create);
 
 //********* API DOCUMENTATION **********
