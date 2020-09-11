@@ -1,6 +1,7 @@
 const models = require('../models');
 const Channel = models.Channel;
 const { to, ReE, ReS } = require('../services/util.service');
+const { getYoutube } = require('../helper');
 
 const create = async function (req, res) {
     let err, channel;
@@ -11,7 +12,11 @@ const create = async function (req, res) {
     channel = await Channel.findOne({ where: { ytId: channelInfo.ytId } }).then(
         async (found) => {
             if (found === null) {
-                return await Channel.create(channelInfo);
+                const confirmedChannel = await getYoutube(channelInfo.ytId);
+                if (confirmedChannel === null) {
+                    return ReE(res, 'channel does not exist');
+                }
+                return await Channel.create(confirmedChannel);
             } else {
                 return found;
             }
