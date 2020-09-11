@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
                 unique: true,
             },
             type: DataTypes.INTEGER,
+            private: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false,
+            },
         },
         {
             timestamps: false,

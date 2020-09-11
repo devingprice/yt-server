@@ -3,7 +3,22 @@ module.exports = (sequelize, DataTypes) => {
         'Channel',
         {
             name: DataTypes.STRING,
-            ytId: DataTypes.STRING,
+            ytId: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                // unique: 'compositeIndex',
+                primaryKey: true,
+            },
+            CollectionId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'Collections',
+                    key: 'id',
+                    // unique: 'compositeIndex',
+                    primaryKey: true,
+                },
+            },
         },
         {
             timestamps: false,

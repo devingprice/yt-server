@@ -56,20 +56,20 @@ let collection = async function (req, res, next) {
     }
 
     // todo may remove this, not sure if it will stop public viewing
-    let user, users_array, users;
-    user = req.user;
-    [err, users] = await to(collection.getUsers());
+    // let user, users_array, users;
+    // user = req.user;
+    // [err, users] = await to(collection.getUsers());
 
-    users_array = users.map((obj) => String(obj.user));
+    // users_array = users.map((obj) => String(obj.user));
 
-    if (!users_array.includes(String(user._id))) {
-        return ReE(
-            res,
-            'User does not have permission to read app with id: ' + app_id
-                ? app_id
-                : null
-        );
-    }
+    // if (!users_array.includes(String(user._id))) {
+    //     return ReE(
+    //         res,
+    //         'User does not have permission to read app with id: ' + app_id
+    //             ? app_id
+    //             : null
+    //     );
+    // }
 
     req.collection = collection;
     next();
