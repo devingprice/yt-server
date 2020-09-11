@@ -6,28 +6,19 @@ const create = async function (req, res) {
     let err, channel;
     let collection = req.collection;
 
-    let channelInfo = {
-        ...req.body,
-        CollectionId: collection.id,
-    };
+    let channelInfo = req.body;
 
-    [err, channel] = await to(Channel.create(channelInfo));
-    if (err) {
-        return ReE(res, err, 422);
-    }
-
-    //channel.setCollection(collection);
-    console.log(channel);
-
-    //#region unique channels
-    await models.UniqueChannel.findOne({ where: { ytId: channel.ytId } }).then(
-        (found) => {
+    channel = await Channel.findOne({ where: { ytId: channelInfo.ytId } }).then(
+        async (found) => {
             if (found === null) {
-                models.UniqueChannel.create(channel.toWeb());
+                return await Channel.create(channelInfo);
+            } else {
+                return found;
             }
         }
     );
-    //#endregion
+
+    channel.addCollection(collection);
 
     let channelJson = channel.toWeb();
 

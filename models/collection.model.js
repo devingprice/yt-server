@@ -25,7 +25,9 @@ module.exports = (sequelize, DataTypes) => {
         this.Users = this.belongsToMany(models.User, {
             through: 'UserCollection',
         });
-        this.Channels = this.hasMany(models.Channel);
+        this.Channels = this.belongsToMany(models.Channel, {
+            through: 'LinkedChannel',
+        });
 
         this.belongsToMany(models.Collection, {
             through: 'NestedCollection',
@@ -43,6 +45,19 @@ module.exports = (sequelize, DataTypes) => {
     // eslint-disable-next-line no-unused-vars
     Model.prototype.toWeb = function (pw) {
         let json = this.toJSON();
+
+        if (json.UserCollection) {
+            json.order = json.UserCollection.order;
+            delete json.UserCollection;
+        }
+        if (
+            json.Channels &&
+            typeof json.Channels === 'array' &&
+            json.Channels.length > 0
+        ) {
+            json.Channels.forEach((e) => delete e.LinkedChannel);
+        }
+
         return json;
     };
 

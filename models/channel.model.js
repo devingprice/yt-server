@@ -9,16 +9,6 @@ module.exports = (sequelize, DataTypes) => {
                 // unique: 'compositeIndex',
                 primaryKey: true,
             },
-            CollectionId: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: 'Collections',
-                    key: 'id',
-                    // unique: 'compositeIndex',
-                    primaryKey: true,
-                },
-            },
         },
         {
             timestamps: false,
@@ -26,12 +16,18 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     Model.associate = function (models) {
-        this.Collections = this.belongsTo(models.Collection);
+        this.Collections = this.belongsToMany(models.Collection, {
+            through: 'LinkedChannel',
+            foreignKey: 'ytId',
+        });
     };
 
     // eslint-disable-next-line no-unused-vars
     Model.prototype.toWeb = function (pw) {
         let json = this.toJSON();
+
+        delete json.LinkedChannel;
+
         return json;
     };
 
