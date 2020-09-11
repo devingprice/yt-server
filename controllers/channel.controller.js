@@ -4,7 +4,6 @@ const { to, ReE, ReS } = require('../services/util.service');
 
 const create = async function (req, res) {
     let err, channel;
-    let user = req.user;
     let collection = req.collection;
 
     let channelInfo = req.body;
@@ -16,13 +15,7 @@ const create = async function (req, res) {
 
     channel.setCollection(collection);
 
-    [err, channel] = await to(channel.save());
-    if (err) {
-        return ReE(res, err, 422);
-    }
-
     let channelJson = channel.toWeb();
-    channelJson.users = [{ user: user.id }];
 
     return ReS(res, { channel: channelJson }, 201);
 };

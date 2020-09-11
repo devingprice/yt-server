@@ -85,26 +85,63 @@ const getAllForUser = async function (req, res) {
     });
 };
 
-//TODO: add this Add_channels_to_output on other functions
+const getChannels = async (collection) => {
+    let channelsArray;
+    [err, channelsArray] = await to(collection.getChannels());
+    return channelsArray;
+};
+
+// recursively fetch all nested collections with channels added
+const getCollections = async (collectionId, depth) => {
+    if (depth > 4) {
+        return null;
+    }
+    const collection = await Collection.findOne({
+        where: { id: collectionId },
+    });
+    const nestedIds = await models.sequelize.query(
+        `SELECT child_id FROM nestedcollections WHERE nestedcollections.parent_id = '${collection.id}'`,
+        { type: models.Sequelize.QueryTypes.SELECT }
+    );
+    console.log(
+        `Id: ${collectionId} | NestedIds: ${nestedIds.map((e) => e.child_id)}`
+    );
+    if (nestedIds.length === 0) {
+        console.log(`Id: ${collectionId} has no nested`);
+        const channels = await getChannels(collection);
+        const collWithChannels = {
+            ...collection.toWeb(),
+            channels: channels.map((chan) => chan.toWeb()),
+        };
+        console.log(collWithChannels);
+        return collWithChannels;
+    }
+
+    const deeper = depth + 1;
+    const promises = nestedIds.map((e) => {
+        return getCollections(e.child_id, deeper);
+    });
+
+    const nested = await Promise.all(promises);
+
+    console.log(nested);
+
+    const channels = await getChannels(collection);
+    const collWithChannelsNested = {
+        ...collection.toWeb(),
+        channels: channels.map((chan) => chan.toWeb()),
+        nested,
+    };
+    console.log(collWithChannelsNested);
+    return collWithChannelsNested;
+};
+
 const get = async function (req, res) {
     let collection = req.collection;
 
-    let channelsArray;
-    [err, channelsArray] = await to(collection.getChannels());
-    if (err) {
-        return ReE(res, 'err finding channels');
-    }
+    let collectionWithNested = await getCollections(collection.id, 0);
 
-    let nested;
-    [err, nested] = await to(collection.getChild());
-    if (err) {
-        return ReE(res, 'err finding nested collections');
-    }
-
-    let collectionJson = collection.toWeb();
-    collectionJson.channels = channelsArray;
-    collectionJson.nested = nested;
-    return ReS(res, { collection: collectionJson });
+    return ReS(res, { collection: collectionWithNested });
 };
 
 const update = async function (req, res) {
@@ -177,7 +214,7 @@ const order = async function (req, res) {
         DROP TEMPORARY TABLE tempColl;
         `
     */
-   //#endregion
+    //#endregion
 
     const existingIds = userCollections.map((e) => e.CollectionId);
 
