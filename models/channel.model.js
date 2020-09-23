@@ -9,9 +9,16 @@ module.exports = (sequelize, DataTypes) => {
                 // unique: 'compositeIndex',
                 primaryKey: true,
             },
+            thumbnail: DataTypes.STRING,
+            views: DataTypes.INTEGER,
+            subs: DataTypes.INTEGER,
+            videos: DataTypes.INTEGER,
+            statsUpdated: DataTypes.DATE,
+            videosUpdated: DataTypes.DATE,
         },
         {
             timestamps: false,
+            // createdAt: false,
         }
     );
 
@@ -20,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
             through: 'LinkedChannel',
             foreignKey: 'ytId',
         });
+        this.Videos = this.hasMany(models.Video);
     };
 
     // eslint-disable-next-line no-unused-vars

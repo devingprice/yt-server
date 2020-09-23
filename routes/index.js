@@ -6,6 +6,7 @@ const UserController = require('../controllers/user.controller');
 const CollectionController = require('../controllers/collection.controller');
 const ChannelController = require('../controllers/channel.controller');
 const FollowController = require('../controllers/follow.controller');
+const VideoController = require('../controllers/video.controller');
 
 const custom = require('./../middleware/custom');
 const passport = require('passport');
@@ -32,18 +33,22 @@ router.post('/users/login', UserController.login);
 
 router.post('/collection', JWTAuth, CollectionController.create);
 router.get('/collections/:user_id', JWTAuth, CollectionController.getAllForUser);
-router.get('/collection/:collection_id', JWTAuth, custom.collection, CollectionController.get);
+router.get('/collection/:collection_id', custom.collection, CollectionController.get); //JWTAuth, 
 router.put('/collection/:collection_id', JWTAuth, custom.collection, CollectionController.update);
 router.delete('/collection/:collection_id', JWTAuth, custom.collection, CollectionController.remove);
 
 router.post('/channel/:collection_id', JWTAuth, custom.collection, ChannelController.create);
-router.delete('/channel/:channel_id', JWTAuth, custom.channel, ChannelController.remove);
+router.delete('/channel/:channel_id/:collection_id', JWTAuth, custom.channel, ChannelController.remove);
 
 router.put('/order/:user_id', JWTAuth, CollectionController.order);
 router.post('/follow/:parentId/:childId', JWTAuth, FollowController.create);
 router.delete('/follow/:parentId/:childId', JWTAuth, FollowController.remove);
 
 router.post('/collections', JWTAuth, CollectionController.create);
+
+router.get('/videos/:channelId', VideoController.get);
+router.get('/videos/collection/:collectionId', VideoController.getCollection);
+router.get('/videos/multiple/:ids', VideoController.getMultiple);
 
 //********* API DOCUMENTATION **********
 router.use(
