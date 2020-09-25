@@ -5,6 +5,15 @@ const { getYoutubeVideosForChannel, bulkCreateVideos } = require('../helper');
 
 const get = async function (req, res) {
     const channelId = req.params.channelId;
+    console.log(channelId);
+    if (
+        channelId === 'null' ||
+        channelId === 'undefined' ||
+        channelId === '' ||
+        !channelId
+    ) {
+        return ReE(res, 'Invalid channelId sent to video controller', 400);
+    }
     let channel;
 
     channel = await Channel.findOne({ where: { ytId: channelId } });
@@ -32,7 +41,12 @@ const get = async function (req, res) {
     }
 
     const videos = await channel.getVideos();
-    return ReS(res, { lastUpdatedOnDB: lastUpdated, videos });
+    const returnData = {
+        lastUpdatedOnDB: lastUpdated,
+        videos,
+        channelId: channel.ytId,
+    };
+    return ReS(res, returnData);
 };
 
 const getMultiple = async (req, res) => {

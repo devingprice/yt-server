@@ -135,3 +135,43 @@ module.exports = {
     getYoutubeFeeds,
     bulkCreateVideos,
 };
+
+// TODO: feeds has views and likes which video search does not, may pull feeds to update most recent data for video
+
+// from frontend to parse feeds response, may be of use in above function
+// export async function fetchFeedOld(inputChannelId){
+//     //return {}; //too many requests being sent during dev
+//     let urlBase = "https://www.youtube.com/feeds/videos.xml?channel_id=";
+
+//     let feed = await parser.parseURL( CORS_PROXY + urlBase + inputChannelId );
+
+//     let itemsArray = [];
+//     feed.items.forEach(function(entry) {
+//         let likesDislikes = parseInt(entry['mediaGroup'][0]['media:community'][0]['media:starRating'][0]['$']['count']);
+//         let percentPositive = (parseFloat(entry['mediaGroup'][0]['media:community'][0]['media:starRating'][0]['$']['average']) / 5).toPrecision(3);
+
+//         let likes = parseInt(likesDislikes * percentPositive);
+//         let dislikes = likesDislikes - likes ;
+
+//         let newItem = {
+//             id: entry.videoId,
+//             link: entry.link,
+//             title: entry.title,
+//             thumbnail: entry['mediaGroup'][0]['media:thumbnail'][0]['$']['url'],
+//             description: entry['mediaGroup'][0]['media:description'][0],
+//             published: Date.parse(entry.published),
+//             updated: Date.parse(entry.updated),
+//             likes: likes,
+//             dislikes: dislikes,
+//             views: parseInt(entry['mediaGroup'][0]['media:community'][0]['media:statistics'][0]['$']['views']),
+//             channelId: entry.channelId,
+//             channelTitle: entry.author,
+//         };
+
+//         itemsArray.push( newItem );
+//     });
+
+//     let returnObj = {};
+//     returnObj[inputChannelId] = itemsArray;
+//     return returnObj;
+// }

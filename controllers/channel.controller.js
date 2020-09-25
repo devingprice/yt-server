@@ -26,7 +26,7 @@ const create = async function (req, res) {
                         'The Youtube API did not return a channel for the submitted ID so channel could not be created in database.'
                     );
                 }
-
+                console.log(confirmedChannel.items[0]);
                 confirmedChannelParsed = {
                     ytId: confirmedChannel.items[0].id,
                     name: confirmedChannel.items[0].snippet.title,
