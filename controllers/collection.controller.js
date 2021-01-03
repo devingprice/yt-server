@@ -103,9 +103,9 @@ const getCollections = async (collectionId, depth) => {
         `SELECT child_id FROM nestedcollections WHERE nestedcollections.parent_id = '${collection.id}'`,
         { type: models.Sequelize.QueryTypes.SELECT }
     );
-    console.log(
-        `Id: ${collectionId} | NestedIds: ${nestedIds.map((e) => e.child_id)}`
-    );
+    // console.log(
+    //     `Id: ${collectionId} | NestedIds: ${nestedIds.map((e) => e.child_id)}`
+    // );
     if (nestedIds.length === 0) {
         console.log(`Id: ${collectionId} has no nested`);
         const channels = await getChannels(collection);
@@ -113,7 +113,7 @@ const getCollections = async (collectionId, depth) => {
             ...collection.toWeb(),
             channels: channels.map((chan) => chan.toWeb()),
         };
-        console.log(collWithChannels);
+        // console.log(collWithChannels);
         return collWithChannels;
     }
 
@@ -124,7 +124,7 @@ const getCollections = async (collectionId, depth) => {
 
     const nested = await Promise.all(promises);
 
-    console.log(nested);
+    // console.log(nested);
 
     const channels = await getChannels(collection);
     const collWithChannelsNested = {
@@ -132,7 +132,7 @@ const getCollections = async (collectionId, depth) => {
         channels: channels.map((chan) => chan.toWeb()),
         nested,
     };
-    console.log(collWithChannelsNested);
+    // console.log(collWithChannelsNested);
     return collWithChannelsNested;
 };
 

@@ -33,12 +33,12 @@ router.post('/users/login', UserController.login);
 
 router.post('/collection', JWTAuth, CollectionController.create);
 router.get('/collections/:user_id', JWTAuth, CollectionController.getAllForUser);
-router.get('/collection/:collection_id', custom.collection, CollectionController.get); //JWTAuth, 
-router.put('/collection/:collection_id', JWTAuth, custom.collection, CollectionController.update);
-router.delete('/collection/:collection_id', JWTAuth, custom.collection, CollectionController.remove);
+router.get('/collection/:collection_uid', custom.collection, CollectionController.get); //JWTAuth, 
+router.put('/collection/:collection_uid', JWTAuth, custom.collection, CollectionController.update);
+router.delete('/collection/:collection_uid', JWTAuth, custom.collection, CollectionController.remove);
 
-router.post('/channel/:collection_id', JWTAuth, custom.collection, ChannelController.create);
-router.delete('/channel/:channel_id/:collection_id', JWTAuth, custom.channel, ChannelController.remove);
+router.post('/channel/:collection_uid', JWTAuth, custom.collection, ChannelController.create);
+router.delete('/channel/:channel_id/:collection_uid', JWTAuth, custom.channel, custom.collection, ChannelController.remove);
 
 router.put('/order/:user_id', JWTAuth, CollectionController.order);
 router.post('/follow/:parentId/:childId', JWTAuth, FollowController.create);

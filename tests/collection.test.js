@@ -33,7 +33,7 @@ describe('Collections', () => {
             });
     });
 
-    describe('GET /collection/:collection_id', () => {
+    describe('GET /collection/:collection_uid', () => {
         it('it should 404 a request without a collection id', (done) => {
             chai.request(server)
                 .get('/collection/')
@@ -146,7 +146,7 @@ describe('Collections', () => {
         });
     });
 
-    describe('PUT /collection/:collection_id', () => {
+    describe('PUT /collection/:collection_uid', () => {
         const newName = 'Renamed Collection';
 
         it('it should 404 a request without a collection id', (done) => {
@@ -205,7 +205,7 @@ describe('Collections', () => {
         });
     });
 
-    describe('DELETE /collection/:collection_id', () => {
+    describe('DELETE /collection/:collection_uid', () => {
         it('it should reject unauthenticated request');
         it('it should reject unauthorized request');
         it('it should remove collection from database');

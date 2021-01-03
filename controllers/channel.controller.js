@@ -1,5 +1,6 @@
 const models = require('../models');
 const Channel = models.Channel;
+const LinkedChannel = models.LinkedChannel;
 const { to, ReE, ReS } = require('../services/util.service');
 const { recursive, getChannelDetails, bulkCreateVideos } = require('../helper');
 
@@ -74,14 +75,41 @@ const create = async function (req, res) {
 };
 
 const remove = async function (req, res) {
-    let channel, err;
-    channel = req.channel;
-    [err, channel] = await to(channel.destroy());
+    //#region middleware
+    let channelId = req.params.channel_id;
+    let collectionUid = req.collection.uniqueid;
+    let collectionId = req.collection.id;
+    let linkedChannel;
+
+    [err, linkedChannel] = await to(
+        LinkedChannel.findOne({
+            where: { ytId: channelId, CollectionId: collectionId },
+        })
+    );
     if (err) {
-        return ReE(res, 'error occured trying to delete the channel');
+        return ReE(
+            res,
+            `Error finding Linked Channel with collection uid: ${collectionUid} / id : ${collectionId} & channel id: ${channelId}`
+        );
     }
 
-    return ReS(res, { message: 'Deleted channel' }, 204);
+    if (!linkedChannel) {
+        return ReE(
+            res,
+            `Linked Channel not found with collection uid: ${collectionUid} / id : ${collectionId} & channel id: ${channelId}`
+        );
+    }
+    //#endregion
+
+    [err, linkedChannel] = await to(linkedChannel.destroy());
+    if (err) {
+        return ReE(
+            res,
+            `Error deleting Linked Channel with collection uid: ${collectionUid} / id : ${collectionId} & channel id: ${channelId}`
+        );
+    }
+
+    return ReS(res, { message: 'Deleted linked channel' }, 204); //204 has no response body, message won't actually be received
 };
 
 module.exports = { create, remove };

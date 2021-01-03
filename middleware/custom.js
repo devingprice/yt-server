@@ -3,20 +3,20 @@ const Collection = require('./../models').Collection;
 const Channel = require('./../models').Channel;
 const { to, ReE } = require('../services/util.service');
 
-//find collection where collection_id = uniqueid
+//find collection where collection_uid = uniqueid
 let collection = async function (req, res, next) {
-    let collection_id, err, collection;
-    collection_id = req.params.collection_id;
+    let collection_uid, err, collection;
+    collection_uid = req.params.collection_uid;
 
     [err, collection] = await to(
-        Collection.findOne({ where: { uniqueid: collection_id } })
+        Collection.findOne({ where: { uniqueid: collection_uid } })
     );
     if (err) {
-        return ReE(res, 'Error finding collection: ' + collection_id);
+        return ReE(res, 'Error finding collection: ' + collection_uid);
     }
 
     if (!collection) {
-        return ReE(res, 'Collection not found with id: ' + collection_id);
+        return ReE(res, 'Collection not found with id: ' + collection_uid);
     }
 
     req.collection = collection;
@@ -29,7 +29,7 @@ let channel = async function (req, res, next) {
     let channel_id, err, channel;
     channel_id = req.params.channel_id;
 
-    [err, channel] = await to(Channel.findOne({ where: { id: channel_id } }));
+    [err, channel] = await to(Channel.findOne({ where: { ytId: channel_id } }));
     if (err) {
         return ReE(res, 'Error finding channel: ' + channel_id);
     }
@@ -38,25 +38,25 @@ let channel = async function (req, res, next) {
         return ReE(res, 'Channel not found with id: ' + channel_id);
     }
 
-    console.log(channel.toWeb());
+    // console.log(channel.toWeb());
     req.channel = channel;
     next();
 };
 module.exports.channel = channel;
 
 // let privateCollection = async function (req, res, next) {
-//     let collection_id, err, collection;
-//     collection_id = req.params.collection_id;
+//     let collection_uid, err, collection;
+//     collection_uid = req.params.collection_uid;
 
 //     [err, collection] = await to(
-//         Collection.findOne({ where: { uniqueid: collection_id } })
+//         Collection.findOne({ where: { uniqueid: collection_uid } })
 //     );
 //     if (err) {
-//         return ReE(res, 'Error finding collection: ' + collection_id);
+//         return ReE(res, 'Error finding collection: ' + collection_uid);
 //     }
 
 //     if (!collection) {
-//         return ReE(res, 'Collection not found with id: ' + collection_id);
+//         return ReE(res, 'Collection not found with id: ' + collection_uid);
 //     }
 
 //     // todo may remove this, not sure if it will stop public viewing

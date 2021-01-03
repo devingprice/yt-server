@@ -162,7 +162,7 @@
         ]
       }
     },
-    "/collection/:collection_id": {
+    "/collection/:collection_uid": {
       "get": {
         "tags": [
           "collection"
@@ -494,7 +494,7 @@
         }
       }
     },
-    "/channel/:collection_id": {
+    "/channel/:collection_uid": {
       "post": {
         "tags": [
           "channel"

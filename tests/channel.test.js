@@ -33,7 +33,7 @@ describe('Channels', () => {
             });
     });
 
-    describe('POST /channel/:collection_id', () => {
+    describe('POST /channel/:collection_uid', () => {
         it('it should 404 a request without a collection id');
         it('it should reject a request for a non existant collection');
         it('it should reject unauthenticated request');
