@@ -106,7 +106,7 @@ function parseYtToModelVideos(arr) {
             title: yt.snippet.title,
             description: yt.snippet.description,
             id: yt.id.videoId,
-            thumbnail: yt.snippet.thumbnails.default.url,
+            thumbnail: yt.snippet.thumbnails.high.url,
             channelId: yt.snippet.channelId,
             channelTitle: yt.snippet.channelTitle,
             publishTime: yt.snippet.publishTime,
@@ -128,12 +128,25 @@ async function bulkCreateVideos(arr) {
         });
 }
 
+async function bulkCreateAndGetVideos(arr) {
+    const modelFormatted = parseYtToModelVideos(arr);
+    return await Video.bulkCreate(modelFormatted, { returning: true })
+        .then((videos) => {
+            return videos;
+        })
+        .catch((err) => {
+            console.log(err);
+            return false;
+        });
+}
+
 module.exports = {
     getYoutubeVideosForChannel,
     recursive,
     getChannelDetails,
     getYoutubeFeeds,
     bulkCreateVideos,
+    bulkCreateAndGetVideos,
 };
 
 // TODO: feeds has views and likes which video search does not, may pull feeds to update most recent data for video

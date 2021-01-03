@@ -46,9 +46,9 @@ router.delete('/follow/:parentId/:childId', JWTAuth, FollowController.remove);
 
 router.post('/collections', JWTAuth, CollectionController.create);
 
-router.get('/videos/:channelId', VideoController.get);
 router.get('/videos/collection/:collectionId', VideoController.getCollection);
 router.get('/videos/multiple/:ids', VideoController.getMultiple);
+router.get('/videos/:channelId', VideoController.get);
 
 //********* API DOCUMENTATION **********
 router.use(
