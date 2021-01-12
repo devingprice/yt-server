@@ -5,65 +5,17 @@ const { to, ReE, ReS } = require('../services/util.service');
 const { recursive, getChannelDetails, bulkCreateVideos } = require('../helper');
 
 const create = async function (req, res) {
-    let err, channel;
+    let channel;
     let collection = req.collection;
 
     let channelInfo = req.body;
 
     channel = await Channel.findOne({ where: { ytId: channelInfo.ytId } }).then(
         async (found) => {
-            if (found === null) {
-                // const confirmedChannel = await getYoutubeFeeds(channelInfo.ytId);
-                const confirmedChannel = await getChannelDetails(
-                    channelInfo.ytId
-                );
-
-                if (
-                    confirmedChannel === null ||
-                    confirmedChannel.items.length === 0
-                ) {
-                    return ReE(
-                        res,
-                        'The Youtube API did not return a channel for the submitted ID so channel could not be created in database.'
-                    );
-                }
-                console.log(confirmedChannel.items[0]);
-                confirmedChannelParsed = {
-                    ytId: confirmedChannel.items[0].id,
-                    name: confirmedChannel.items[0].snippet.title,
-                    thumbnail:
-                        confirmedChannel.items[0].snippet.thumbnails.default
-                            .url,
-                    views: confirmedChannel.items[0].statistics.viewCount,
-                    subs: confirmedChannel.items[0].statistics.subscriberCount,
-                    videos: confirmedChannel.items[0].statistics.videoCount,
-                };
-                const createdChannel = await Channel.create({
-                    ...confirmedChannelParsed,
-                    statsUpdated: models.sequelize.literal('CURRENT_TIMESTAMP'),
-                });
-
-                try {
-                    const ytArr = await recursive(createdChannel.ytId);
-                    const success = await bulkCreateVideos(ytArr);
-                    console.log(
-                        `Creating bulk videos was a ${
-                            success ? 'success' : 'failure'
-                        }`
-                    );
-                    createdChannel.update({
-                        videosUpdated: models.sequelize.literal(
-                            'CURRENT_TIMESTAMP'
-                        ),
-                    });
-                } catch (err) {
-                    console.log(err);
-                }
-
-                return createdChannel;
-            } else {
+            if (found !== null) {
                 return found;
             }
+            return createChannel(channelInfo, res);
         }
     );
 
@@ -112,4 +64,48 @@ const remove = async function (req, res) {
     return ReS(res, { message: 'Deleted linked channel' }, 204); //204 has no response body, message won't actually be received
 };
 
+//#region Helper
+async function createChannel(channelInfo, res) {
+    const confirmedChannel = await getChannelDetails(channelInfo.ytId);
+
+    if (confirmedChannel === null || confirmedChannel.items.length === 0) {
+        return ReE(
+            res,
+            'The Youtube API did not return a channel for the submitted ID so channel could not be created in database.'
+        );
+    }
+    console.log(confirmedChannel.items[0]);
+    confirmedChannelParsed = {
+        ytId: confirmedChannel.items[0].id,
+        name: confirmedChannel.items[0].snippet.title,
+        thumbnail: confirmedChannel.items[0].snippet.thumbnails.default.url,
+        views: confirmedChannel.items[0].statistics.viewCount,
+        subs: confirmedChannel.items[0].statistics.subscriberCount,
+        videos: confirmedChannel.items[0].statistics.videoCount,
+    };
+    const createdChannel = await Channel.create({
+        ...confirmedChannelParsed,
+        statsUpdated: models.sequelize.literal('CURRENT_TIMESTAMP'),
+    });
+
+    try {
+        const ytArr = await recursive(createdChannel.ytId);
+        const success = await bulkCreateVideos(ytArr);
+        console.log(
+            `Creating bulk videos was a ${success ? 'success' : 'failure'}`
+        );
+        createdChannel.update({
+            videosUpdated: models.sequelize.literal('CURRENT_TIMESTAMP'),
+        });
+    } catch (err) {
+        console.log(err);
+        return ReE(
+            res,
+            'The Youtube API did not return a channel for the submitted ID so channel could not be created in database.'
+        );
+    }
+
+    return createdChannel;
+}
+//#endregion
 module.exports = { create, remove };

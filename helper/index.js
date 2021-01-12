@@ -118,7 +118,7 @@ function parseYtToModelVideos(arr) {
 
 async function bulkCreateVideos(arr) {
     const modelFormatted = parseYtToModelVideos(arr);
-    return await Video.bulkCreate(modelFormatted)
+    return await Video.bulkCreate(modelFormatted, { ignoreDuplicates: true })
         .then(() => {
             return true;
         })
